@@ -1,0 +1,190 @@
+version: "3.9"
+
+x-media-volume: &media-volume ./media/:${PROJECT_PATH:-/usr/src/app}/media/
+x-config-volume: &config-volume ./config/:${PROJECT_PATH:-/usr/src/app}/config/
+x-resources-volume: &resources-volume ./config/:${PROJECT_PATH:-/usr/src/app}/resources/
+
+services:
+  tg_bot:
+    container_name: "template_shop.tg_bot"
+    image: "template_shop.tg_bot"
+    build:
+      context: .
+    restart: unless-stopped
+    stop_signal: SIGINT
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - *media-volume
+      - *resources-volume
+      - *config-volume
+    networks:
+      - template_shop.postgres.network
+      - template_shop.redis.network
+    environment:
+      - CONFIG_PATH=${CONFIG_PATH:-./config/config.prod.toml}
+    command: [ "python", "-Om", "template_shop.bot" ]
+
+  admin_panel:
+    container_name: "template_shop.admin_panel"
+    image: "template_shop.admin_panel"
+    build:
+      context: .
+    restart: unless-stopped
+    stop_signal: SIGINT
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "${ADMIN_PANEL_EXPOSE_PORT}:5000"
+    volumes:
+      - *media-volume
+      - *config-volume
+    networks:
+      - template_shop.postgres.network
+    environment:
+      - CONFIG_PATH=${CONFIG_PATH:-./config/config.prod.toml}
+    command: [ "gunicorn", "template_shop.admin_panel.wsgi:app", "--workers", "2", "--threads", "2", "-b", "0.0.0.0:5000" ]
+
+  worker:
+    container_name: "template_shop.worker"
+    image: "template_shop.worker"
+    build:
+      context: .
+    restart: unless-stopped
+    stop_signal: SIGINT
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - *config-volume
+    networks:
+      - template_shop.postgres.network
+      - template_shop.redis.network
+    environment:
+      - CONFIG_PATH=${CONFIG_PATH:-./config/config.prod.toml}
+    command: [ "python", "-Om", "template_shop.worker" ]
+
+  redis:
+    container_name: "template_shop.redis"
+    image: redis:7.0.10-alpine
+    command:
+      sh -c '
+      redis-server
+      --appendonly yes
+      --bind 0.0.0.0'
+    volumes:
+      - template_shop.redis.data:/data:rw
+    ports:
+      - "${REDIS_EXPOSE_PORT}:6379"
+    networks:
+      - template_shop.redis.network
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 60s
+      retries: 5
+      start_period: 10s
+    environment:
+      - CONFIG_PATH=${CONFIG_PATH:-./config/config.prod.toml}
+
+  postgres_migration:
+    container_name: "template_shop.postgres_migration"
+    image: "template_shop.postgres_migration"
+    build:
+      context: .
+    restart: on-failure
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - template_shop.postgres.network
+    volumes:
+      - .:${PROJECT_PATH:-/usr/src/app}
+      - ./alembic.ini:${PROJECT_PATH:-/usr/src/app}/alembic.ini:ro
+      - *config-volume
+    environment:
+      - CONFIG_PATH=${CONFIG_PATH:-./config/config.prod.toml}
+    command: [ "python", "-m", "alembic", "upgrade", "head" ]
+
+  postgres:
+    container_name: "template_shop.postgres"
+    image: "postgres:15-alpine"
+    hostname: "template_shop.postgres"
+    restart: unless-stopped
+    expose:
+      - "5432"
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    networks:
+      - template_shop.postgres.network
+    environment:
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+      POSTGRES_USER: $POSTGRES_USER
+      POSTGRES_DB: $POSTGRES_DB
+      TZ: $POSTGRES_TZ
+      PGTZ: $POSTGRES_TZ
+    volumes:
+      - template_shop.postgres.data:/var/lib/postgresql/users:rw
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}" ]
+      interval: 10s
+      timeout: 60s
+      retries: 5
+      start_period: 10s
+
+  postgres_backup:
+    container_name: "template_shop.postgres_backup"
+    image: prodrigestivill/postgres-backup-local:15-alpine
+    networks:
+      - template_shop.postgres.network
+    environment:
+      - POSTGRES_HOST=template_shop.postgres
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - BACKUP_DIR=/backups
+      - POSTGRES_EXTRA_OPTS=-Z6 --schema=public -b -a
+      - SCHEDULE=${POSTGRES_BACKUP_SCHEDULE:-@daily}
+      - HEALTHCHECK_PORT=8080
+      - TZ={$POSTGRES_TZ}
+    volumes:
+      - ${POSTGRES_BACKUP_DIR:-./.backups/postgres}:/backups
+
+  pgadmin:
+    container_name: "template_shop.pgadmin"
+    image: dpage/pgadmin4:latest
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-admin@example.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+      PGADMIN_LISTEN_PORT: 5050
+    volumes:
+      - template_shop.pgadmin.data:/var/lib/pgadmin
+    ports:
+      - "${PGADMIN_LISTEN_PORT}:5050"
+    expose:
+      - "${PGADMIN_LISTEN_PORT}"
+    networks:
+      - template_shop.postgres.network
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+
+volumes:
+  template_shop.postgres.data: {}
+  template_shop.redis.data: {}
+  template_shop.pgadmin.data: {}
+  template_shop.grafana.data: {}
+  template_shop.loki.data: {}
+
+networks:
+  template_shop.postgres.network: {}
+  template_shop.redis.network: {}
+  template_shop.grafana.network: {}

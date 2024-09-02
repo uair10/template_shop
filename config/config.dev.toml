@@ -1,0 +1,22 @@
+[tg_bot]
+token = "5451936323:AAHeZBq-QssJJv2hOYLvq4DLJhQ0nJvYLKE"
+admin_ids = [1413248651]
+developer_id = 1413248651
+admin_channel_id = -1001939607582
+use_redis = true
+
+[db]
+host = "localhost"
+port = 5432
+password = "user"
+user = "user"
+name = "template_shop"
+echo = true
+
+[redis]
+host = "localhost"
+port = 6379
+database = 5
+
+[payment]
+crypto_token = "123"

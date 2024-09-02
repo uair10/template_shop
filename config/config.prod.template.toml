@@ -1,0 +1,22 @@
+[tg_bot]
+token = ""
+admin_ids = [123]
+developer_id = 123
+admin_channel_id = -123
+use_redis = true
+
+[db]
+host = "template_shop.postgres"
+port = 5432
+password = ""
+user = ""
+name = "template_shop"
+echo = true
+
+[redis]
+host = "template_shop.redis"
+port = 6379
+database = 1
+
+[payment]
+crypto_token = "123"
