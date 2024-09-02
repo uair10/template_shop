@@ -11,4 +11,4 @@ COPY requirements.txt .
 RUN pip install --upgrade pip \
     && pip install -r requirements.txt
 
-COPY weed_shop /usr/src/app/weed_shop
+COPY weed_shop /usr/src/app/template_shop
