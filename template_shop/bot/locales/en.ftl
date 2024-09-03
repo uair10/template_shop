@@ -27,7 +27,7 @@ order-not-exists-msg = The order doesn't exist
 welcome =
     Hello, { $user }!
     Select option to start.
-buy-btn = 🛒 Catalog
+buy-btn = 🛒 Buy PSD
 profile-btn = 👤 Profile
 change-lang-btn = 🌎 Изменить язык
 select-lang-msg = Select language

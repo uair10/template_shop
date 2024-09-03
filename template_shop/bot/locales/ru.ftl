@@ -26,7 +26,7 @@ order-not-exists-msg = Заказ не существует
 welcome =
     Здравствуйте, { $user }!
     Чтобы начать, просто выберите нужную вам опцию.
-buy-btn = 🛒 Каталог
+buy-btn = 🛒 Купить PSD
 profile-btn = 👤 Личный кабинет
 change-lang-btn = 🌎 Change language
 select-lang-msg = Выберите язык
