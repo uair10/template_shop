@@ -1,4 +1,5 @@
 import logging
+from decimal import Decimal
 
 from aiogram import Bot, types
 from aiogram_dialog import DialogManager
@@ -48,12 +49,11 @@ async def clear_cart(call: types.CallbackQuery, __, manager: DialogManager):
     manager.dialog_data.pop("cart")
 
 
-async def add_product_to_cart(call: types.CallbackQuery, __, manager: DialogManager):
+async def add_product_to_cart(_, __, manager: DialogManager):
     product_id: int = manager.dialog_data.get("product_id")
     cart: list[int] = manager.dialog_data.get("cart", [])
     cart.append(product_id)
     manager.dialog_data["cart"] = cart
-    await call.answer("Добавлен в корзину")
     await manager.back()
 
 
@@ -72,7 +72,7 @@ async def create_order(
     user_service: UserService = manager.middleware_data.get("user_service")
     stats_service: StatsService = manager.middleware_data.get("stats_service")
 
-    discount_summ: float = manager.dialog_data.get("discount_summ", 0)
+    discount_summ = Decimal(manager.dialog_data.get("discount_summ", 0))
     promocode_id: int = manager.dialog_data.get("promocode_id")
 
     user = await user_service.get_user_by_telegram_id(call.from_user.id)
@@ -80,6 +80,7 @@ async def create_order(
 
     products = [await product_service.get_product_by_id(int(product_id)) for product_id in cart_products]
     order_summ = sum((product.price for product in products))
+    order_summ -= discount_summ
 
     if user.balance < order_summ:
         await call.answer(locale.get("not-enough-balance", balance=user.balance))

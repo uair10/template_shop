@@ -21,7 +21,7 @@ class MyAdminIndexView(AuthMixin, AdminIndexView):
         products_purchased = []
         registered_users = []
         orders_created = []
-        payments_payed = []
+        payments_paid = []
 
         for i in range(0, period + 1):
             current_date = date_from + timedelta(days=i)
@@ -34,13 +34,13 @@ class MyAdminIndexView(AuthMixin, AdminIndexView):
             products_purchased.append(statistics.products_purchased if statistics else 0)
             registered_users.append(statistics.users_registered if statistics else 0)
             orders_created.append(statistics.orders_created if statistics else 0)
-            payments_payed.append(statistics.payments_payed if statistics else 0)
+            payments_paid.append(statistics.payments_paid if statistics else 0)
 
         data = {
             "products_purchased": products_purchased,
             "registered_users": registered_users,
             "orders_created": orders_created,
-            "payments_payed": payments_payed,
+            "payments_paid": payments_paid,
         }
 
         df = pd.DataFrame(data, index=dates)

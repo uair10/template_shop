@@ -26,7 +26,7 @@ class StatsRepoImpl(SQLAlchemyRepo):
         products_purchased: int,
         orders_created: int,
         users_registered: int,
-        payments_payed: int,
+        payments_paid: int,
     ) -> None:
         await self._session.execute(
             insert(Statistics).values(
@@ -34,7 +34,7 @@ class StatsRepoImpl(SQLAlchemyRepo):
                 products_purchased=products_purchased,
                 orders_created=orders_created,
                 users_registered=users_registered,
-                payments_payed=payments_payed,
+                payments_paid=payments_paid,
             ),
         )
 
