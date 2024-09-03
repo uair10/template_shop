@@ -21,7 +21,6 @@ class Product(TimedBaseModel):
     name: Mapped[str]
     price: Mapped[Decimal]
     link: Mapped[str]
-    link_password: Mapped[str]
     category: Mapped["Category"] = relationship(back_populates="products")
     category_id: Mapped[int] = mapped_column(ForeignKey("category.id"))
     country: Mapped["Country"] = relationship(back_populates="products")

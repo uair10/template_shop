@@ -45,9 +45,6 @@ async def process_products_file(message: types.Message, _, manager: DialogManage
         if not line.get("download_link"):
             await message.answer(f"Не заполнена ссылка на скачивание в строке {i}")
             continue
-        if not line.get("link_password"):
-            await message.answer(f"Не заполнен пароль от ссылки в строке {i}")
-            continue
         if not line.get("category_id"):
             await message.answer(f"Не заполнен id категории в строке {i}")
             continue
@@ -63,7 +60,6 @@ async def process_products_file(message: types.Message, _, manager: DialogManage
                 name=line.get("product_name"),
                 price=line.get("price"),
                 link=line.get("download_link"),
-                link_password=line.get("link_password"),
                 category_id=line.get("category_id"),
                 country_id=line.get("country_id"),
                 preview_image_path=preview_image,

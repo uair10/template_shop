@@ -10,7 +10,6 @@ def get_excel_values(product: Product) -> dict[str, Any]:
     return {
         "Document name": product.name,
         "Download link": product.link,
-        "Link password": product.link_password,
     }
 
 
