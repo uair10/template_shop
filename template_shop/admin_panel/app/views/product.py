@@ -12,8 +12,8 @@ from template_shop.infrastructure.database.models import Product
 def generate_product_filename(product: Product, file_data, **kwargs):
     """Генерируем название для фото товара"""
 
-    filename, extension = os.path.splitext(file_data.filename)
-    filename = filename.replace(filename, slugify(product.name))
+    _, extension = os.path.splitext(file_data.filename)
+    filename = slugify(f"{product.country.name.lower()}_{product.name}")
     return secure_filename(f"{filename}{extension}")
 
 
