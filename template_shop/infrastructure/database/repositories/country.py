@@ -12,6 +12,6 @@ class CountryRepoImpl(SQLAlchemyRepo):
 
         res = await self._session.scalars(query)
         countries: list[Country] = list(res.unique())
-        countries.sort()
+        countries.sort(key=lambda country: country.name)
 
         return countries
