@@ -3,11 +3,13 @@ from flask_admin.menu import MenuLink
 from flask_login import current_user
 
 from template_shop.admin_panel.app import db
+from template_shop.admin_panel.app.constants import media_path
 from template_shop.admin_panel.app.views import (
     AdminUserBaseModelview,
     BillsModelView,
     CountryModelView,
     MyAdminIndexView,
+    MyFileAdmin,
     OrderModelView,
     ProductModelView,
     PromocodesModelView,
@@ -142,5 +144,13 @@ def init_admin_panel(app):
             menu_icon_type="fas",
             menu_icon_value="fa-users",
             endpoint="admin-user",
+        ),
+    )
+    admin.add_view(
+        MyFileAdmin(
+            media_path,
+            name="Загруженные файлы",
+            menu_icon_type="fas",
+            menu_icon_value="fa-copy",
         ),
     )
