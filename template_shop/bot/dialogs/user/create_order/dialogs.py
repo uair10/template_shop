@@ -15,7 +15,16 @@ from ...getters.categories import categories_getter
 from ...getters.countries import countries_getter
 from ...getters.orders import order_summary_getter
 from ...getters.product import product_info_getter, products_getter
-from .handlers import add_product_to_cart, clear_cart, create_order, select_product, set_category_id, set_country_id
+from .handlers import (
+    add_product_to_cart,
+    clear_cart,
+    create_order,
+    order_doc_drawing,
+    select_product,
+    set_category_id,
+    set_country_id,
+    set_template_type,
+)
 
 
 async def on_process_result(_, result: Any, manager: DialogManager):
@@ -26,7 +35,15 @@ async def on_process_result(_, result: Any, manager: DialogManager):
         ctx.dialog_data.update(result)
 
 
-select_contry_window = Window(
+select_template_type_window = Window(
+    LocaleText("select-template-type-msg"),
+    Button(LocaleText("documents-btn"), "documents", on_click=set_template_type),
+    Button(LocaleText("cards-btn"), "cards", on_click=set_template_type),
+    Cancel(LocaleText("back-btn")),
+    state=BuyAccountSG.select_template_type,
+)
+
+select_country_window = Window(
     LocaleText("select-country-msg"),
     ScrollingGroup(
         Select(
@@ -41,7 +58,7 @@ select_contry_window = Window(
         id="countriessel",
         hide_on_single_page=True,
     ),
-    Cancel(LocaleText("back-btn")),
+    Back(LocaleText("back-btn")),
     state=BuyAccountSG.select_country,
     getter=countries_getter,
 )
@@ -87,7 +104,8 @@ select_products_window = Window(
     ),
     SwitchTo(LocaleText("confirm-btn"), "confirm_btn", BuyAccountSG.overview_order, when=F["cart_total"] > 0),
     Button(LocaleText("clear-cart-btn"), "clear_cart", on_click=clear_cart),
-    Back(LocaleText("back-btn")),
+    SwitchTo(LocaleText("back-btn"), "back_btn", BuyAccountSG.select_template_type, when=F["template_type"] == "cards"),
+    Back(LocaleText("back-btn"), when=F["template_type"] != "cards"),
     state=BuyAccountSG.select_products,
     getter=(products_getter, cart_getter),
 )
@@ -100,6 +118,7 @@ product_info_window = Window(
         when=F["product_preview_img"],
     ),
     Button(LocaleText("add-to-cart-btn"), "add_to_cart", on_click=add_product_to_cart),
+    Button(LocaleText("order-doc-drawing-btn"), "doc_drawing", on_click=order_doc_drawing),
     Back(LocaleText("back-btn")),
     state=BuyAccountSG.product_info,
     getter=product_info_getter,
@@ -147,7 +166,8 @@ order_created_window = Window(
 )
 
 create_order_dialog = Dialog(
-    select_contry_window,
+    select_template_type_window,
+    select_country_window,
     select_category_window,
     select_products_window,
     product_info_window,

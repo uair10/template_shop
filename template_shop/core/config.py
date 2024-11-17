@@ -43,6 +43,7 @@ class TgBotConfig(BaseModel):
     admin_ids: list[int]
     developer_id: int
     admin_channel_id: int
+    channel_for_doc_drawing_orders: int
     use_redis: bool
 
     @validator("admin_ids", pre=True, always=True)

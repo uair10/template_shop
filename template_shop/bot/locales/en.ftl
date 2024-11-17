@@ -27,7 +27,7 @@ order-not-exists-msg = The order doesn't exist
 welcome =
     Hello, { $user }!
     Select option to start.
-buy-btn = 🛒 Buy PSD
+buy-btn = 🛒 PSD templates
 profile-btn = 👤 Profile
 change-lang-btn = 🌎 Изменить язык
 select-lang-msg = Select language
@@ -36,6 +36,9 @@ admin-btn = ⚙️ Admin panel
 
 ### Create Order ###
 select-country-msg = Select country
+select-template-type-msg = Select template type
+documents-btn = Documents
+cards-btn = Cards
 select-category-msg = Select category
 select-products-msg = Select products
 select-payment-method-msg = Select a payment method
@@ -46,7 +49,8 @@ go-to-order-btn = Go to order
 ### Product info ###
 product-title = Name: { $product_title }
 product-price = Price: { $product_price }$
-add-to-cart-btn = 🛒 Add to cart
+order-doc-drawing-btn = 🎨 Order document drawing
+add-to-cart-btn = 🛒 Buy template
 
 
 ### Account messages ###
@@ -107,7 +111,8 @@ order-created-msg =
    Thank you for ordering!
    In order to download the files, go to order
    If you have any technical questions or problems, you can contact tech support @popoze
-
+drawing-order-created-msg =
+    Thank you for order! We will contact you soon.
 orders-history-msg = Your orders:
 order-was-updated = ✅ Order was updated
 order-overview = <b>Your order</b> {"\u000A"}
@@ -146,3 +151,8 @@ new-order-notification =
     ID заказа: { $order_id }
     Сумма заказа: <b>{ $summ } $</b>
     Скидка: { $discount_summ } $
+new-order-for-drawing =
+    🎨 Новый заказ на отрисовку
+    Товар: { $product_name }
+    Заказчик: <code>{ $user_name }</code>
+    TG ID заказчика: <code>{ $user_tg_id }</code>

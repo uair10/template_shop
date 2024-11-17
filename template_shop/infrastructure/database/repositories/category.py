@@ -14,6 +14,13 @@ class CategoryRepoImpl(SQLAlchemyRepo):
         return category
 
     @exception_mapper
+    async def get_category_by_name(self, category_name: str) -> Category:
+        query = select(Category).where(Category.name.ilike(category_name))
+        category: Category | None = await self._session.scalar(query)
+
+        return category
+
+    @exception_mapper
     async def get_categories(self, country_id: int) -> list[Category]:
         """Получаем категории"""
 

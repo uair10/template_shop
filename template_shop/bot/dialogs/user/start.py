@@ -12,7 +12,7 @@ start_window = Window(
     Start(
         LocaleText("buy-btn"),
         id="buy_btn",
-        state=BuyAccountSG.select_country,
+        state=BuyAccountSG.select_template_type,
     ),
     Start(
         LocaleText("change-lang-btn"),

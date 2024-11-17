@@ -38,6 +38,7 @@ class PromocodeSG(StatesGroup):
 
 
 class BuyAccountSG(StatesGroup):
+    select_template_type = State()
     select_country = State()
     select_category = State()
     select_products = State()

@@ -1,18 +1,36 @@
 import logging
 from decimal import Decimal
+from typing import Any
 
 from aiogram import Bot, types
 from aiogram_dialog import DialogManager
 from fluentogram import TranslatorRunner
 
 from template_shop.bot.services.tg_helpers import send_tg_message
+from template_shop.bot.states import BuyAccountSG
 from template_shop.core.config import Settings
+from template_shop.infrastructure.database.services.category import CategoryService
+from template_shop.infrastructure.database.services.country import CountryService
 from template_shop.infrastructure.database.services.order import OrderService
 from template_shop.infrastructure.database.services.product import ProductService
 from template_shop.infrastructure.database.services.statistics import StatsService
 from template_shop.infrastructure.database.services.user import UserService
 
 logger = logging.getLogger(__name__)
+
+
+async def set_template_type(_, widget: Any, manager: DialogManager):
+    category_service: CategoryService = manager.middleware_data.get("category_service")
+    country_service: CountryService = manager.middleware_data.get("country_service")
+    manager.dialog_data["template_type"] = widget.widget_id
+    if widget.widget_id == "cards":
+        await manager.switch_to(BuyAccountSG.select_products)
+        category = await category_service.get_category_by_name("Cards")
+        country = await country_service.get_country_by_name("International")
+        manager.dialog_data["category_id"] = category.id
+        manager.dialog_data["country_id"] = country.id
+    else:
+        await manager.next()
 
 
 async def set_category_id(
@@ -45,7 +63,7 @@ async def select_product(
     await manager.next()
 
 
-async def clear_cart(call: types.CallbackQuery, __, manager: DialogManager):
+async def clear_cart(_, __, manager: DialogManager):
     manager.dialog_data.pop("cart")
 
 
@@ -55,6 +73,32 @@ async def add_product_to_cart(_, __, manager: DialogManager):
     cart.append(product_id)
     manager.dialog_data["cart"] = cart
     await manager.back()
+
+
+async def order_doc_drawing(call: types.CallbackQuery, __, manager: DialogManager):
+    bot: Bot = manager.middleware_data.get("bot")
+    config: Settings = manager.middleware_data.get("config")
+    locale: TranslatorRunner = manager.middleware_data.get("locale")
+    product_service: ProductService = manager.middleware_data.get("product_service")
+
+    product = await product_service.get_product_by_id(manager.dialog_data.get("product_id"))
+
+    user_name = call.from_user.username
+    if user_name is None:
+        user_name = call.from_user.first_name
+
+    await send_tg_message(
+        bot,
+        config.tg_bot.channel_for_doc_drawing_orders,
+        locale.get(
+            "new-order-for-drawing",
+            product_name=product.name,
+            user_name=user_name,
+            user_tg_id=str(call.from_user.id),
+        ),
+    )
+    await call.answer(locale.get("drawing-order-created-msg"), show_alert=True)
+    await manager.done()
 
 
 async def create_order(

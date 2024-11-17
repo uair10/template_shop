@@ -3,6 +3,7 @@ token = ""
 admin_ids = []
 developer_id = 123
 admin_channel_id = -123
+channel_for_doc_drawing_orders = -123
 use_redis = true
 
 [db]

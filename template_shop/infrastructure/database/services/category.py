@@ -6,6 +6,9 @@ class CategoryService:
     def __init__(self, uow: SQLAlchemyUoW) -> None:
         self._uow = uow
 
+    async def get_category_by_name(self, category_name: str) -> Category:
+        return await self._uow.category_repo.get_category_by_name(category_name)
+
     async def get_category_by_id(self, category_id: int) -> Category:
         return await self._uow.category_repo.get_category_by_id(category_id)
 
