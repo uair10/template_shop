@@ -103,9 +103,14 @@ select_products_window = Window(
         hide_on_single_page=True,
     ),
     SwitchTo(LocaleText("confirm-btn"), "confirm_btn", BuyAccountSG.overview_order, when=F["cart_total"] > 0),
-    Button(LocaleText("clear-cart-btn"), "clear_cart", on_click=clear_cart),
-    SwitchTo(LocaleText("back-btn"), "back_btn", BuyAccountSG.select_template_type, when=F["template_type"] == "cards"),
-    Back(LocaleText("back-btn"), when=F["template_type"] != "cards"),
+    Button(LocaleText("clear-cart-btn"), "clear_cart", on_click=clear_cart, when=F["cart_total"] > 0),
+    SwitchTo(
+        LocaleText("back-btn"),
+        "back_btn",
+        BuyAccountSG.select_template_type,
+        when=F["dialog_data"]["template_type"] == "cards",
+    ),
+    Back(LocaleText("back-btn"), when=F["dialog_data"]["template_type"] != "cards"),
     state=BuyAccountSG.select_products,
     getter=(products_getter, cart_getter),
 )

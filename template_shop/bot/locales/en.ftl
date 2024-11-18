@@ -37,8 +37,8 @@ admin-btn = ⚙️ Admin panel
 ### Create Order ###
 select-country-msg = Select country
 select-template-type-msg = Select template type
-documents-btn = Documents
-cards-btn = Cards
+documents-btn = 🪪 Documents
+cards-btn = 💳 Cards
 select-category-msg = Select category
 select-products-msg = Select products
 select-payment-method-msg = Select a payment method
@@ -154,5 +154,5 @@ new-order-notification =
 new-order-for-drawing =
     🎨 Новый заказ на отрисовку
     Товар: { $product_name }
-    Заказчик: <code>{ $user_name }</code>
+    Заказчик: <code>@{ $user_name }</code>
     TG ID заказчика: <code>{ $user_tg_id }</code>
