@@ -80,8 +80,10 @@ async def order_doc_drawing(call: types.CallbackQuery, __, manager: DialogManage
     config: Settings = manager.middleware_data.get("config")
     locale: TranslatorRunner = manager.middleware_data.get("locale")
     product_service: ProductService = manager.middleware_data.get("product_service")
+    country_service: CountryService = manager.middleware_data.get("country_service")
 
     product = await product_service.get_product_by_id(manager.dialog_data.get("product_id"))
+    country = await country_service.get_country_by_id(product.country_id)
 
     user_name = call.from_user.username
     if user_name is None:
@@ -93,6 +95,7 @@ async def order_doc_drawing(call: types.CallbackQuery, __, manager: DialogManage
         locale.get(
             "new-order-for-drawing",
             product_name=product.name,
+            country_name=country.name,
             user_name=user_name,
             user_tg_id=str(call.from_user.id),
         ),

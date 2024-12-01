@@ -151,5 +151,6 @@ new-order-notification =
 new-order-for-drawing =
     🎨 Новый заказ на отрисовку
     Товар: { $product_name }
+    Страна: { $country_name }
     Заказчик: @{ $user_name }
     TG ID заказчика: <code>{ $user_tg_id }</code>
