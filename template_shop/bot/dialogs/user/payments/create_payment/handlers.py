@@ -69,7 +69,7 @@ async def set_payment_amount(
         bill = await bill_service.create_bill(
             payment_method=payment_method,
             summ=payment_summ,
-            invoice_id=invoice_id,
+            invoice_id=str(invoice_id),
             user_tg_id=message.from_user.id,
         )
         logger.info(f"Создан новый счет {invoice_id}. Метод оплаты: {payment_method}")

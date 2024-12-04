@@ -47,7 +47,7 @@ class BillService:
         self,
         payment_method: PaymentMethod,
         summ: float,
-        invoice_id: int,
+        invoice_id: str,
         user_tg_id: int,
     ) -> Bill:
         """
