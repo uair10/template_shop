@@ -26,7 +26,7 @@ class User(TimedBaseModel):
     orders: Mapped[list["Order"]] = relationship(back_populates="user")
     promocodes: Mapped[list["Promocode"]] = relationship(secondary=promocodes_users, back_populates="users")
     bills: Mapped[list["Bill"]] = relationship(back_populates="user")
-    lang_code: Mapped[LangCode] = mapped_column(server_default="ru")
+    lang_code: Mapped[LangCode] = mapped_column(server_default="en")
     was_registered: Mapped[datetime.datetime] = mapped_column(server_default=func.now())
 
     def __repr__(self) -> str:
