@@ -1,6 +1,7 @@
 from aiogram import F
 from aiogram_dialog import Dialog, Window
-from aiogram_dialog.widgets.kbd import Start
+from aiogram_dialog.widgets.kbd import Start, Url
+from aiogram_dialog.widgets.text import Const
 
 from template_shop.bot.dialogs.getters.users import get_user_info
 from template_shop.bot.dialogs.widgets import LocaleText
@@ -19,6 +20,7 @@ start_window = Window(
         id="change_lang",
         state=LanguageSG.select_language,
     ),
+    Url(LocaleText("create-bot-btn"), Const("https://t.me/popoze")),
     Start(LocaleText("profile-btn"), id="user_profile", state=UserProfileSG.show_profile),
     Start(
         LocaleText("admin-btn"),

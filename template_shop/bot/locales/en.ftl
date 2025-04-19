@@ -25,11 +25,15 @@ order-not-exists-msg = The order doesn't exist
 
 ### Menu messages ###
 welcome =
-    Hello, { $user }!
-    Select option to start.
+    Hi, dear { $user }!
+    
+    🛒 Here you can buy PSD templates or place an order for drawing.
+    
+    🪪 💳 Select the country and the type of document.
 buy-btn = 🛒 PSD templates
 profile-btn = 👤 Profile
 change-lang-btn = 🌎 Изменить язык
+create-bot-btn = 🤖 Create a bot
 select-lang-msg = Select language
 admin-btn = ⚙️ Admin panel
 
